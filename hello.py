@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 # Create an instance of a Flask application
 # It defines the core center for Web requests
@@ -13,9 +13,9 @@ app = Flask(__name__)
 # visiting the root of the web application
 @app.route('/')
 def index():
-    return '<h1>Hello World!</h1>'
+    return render_template('index.html')
 
 # It handles dynamic routes
 @app.route('/user/<name>')
 def user(name):
-    return '<h1>Hello, {}!</h1>'.format(name)
+    return render_template('user.html', name=name)
