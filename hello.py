@@ -10,6 +10,16 @@ app = Flask(__name__)
 # the instance of the app
 bootstrap = Bootstrap(app)
 
+# Error handling, it returns a tuple with the
+# status code for the response to the client
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+
 # The following chunk of code
 # is called a route, composed of
 # a function view, a handler to be called
