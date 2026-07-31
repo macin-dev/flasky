@@ -1,10 +1,14 @@
 from flask import Flask, render_template
+from flask_bootstrap import Bootstrap
 
 # Create an instance of a Flask application
 # It defines the core center for Web requests
 # coming from the user's browser
 app = Flask(__name__)
 
+# Initialize Bootstrap extension by passing in
+# the instance of the app
+bootstrap = Bootstrap(app)
 
 # The following chunk of code
 # is called a route, composed of
