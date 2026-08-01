@@ -35,3 +35,9 @@
     {% block page_content %}{% endblock %}
 </div>
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- Moment js -->
+{{ moment.include_moment() }}
+{% endblock %}
