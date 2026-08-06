@@ -33,7 +33,7 @@ class Role(db.Model):
 
     # On a given instance of Role, this will return an object that 
     # lists all the users that have this role
-    users = db.relationship('User', backref='role')
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
     # Used for debugging and testing purposes 
     def __repr__(self):
@@ -89,12 +89,18 @@ def internal_server_error(e):
 def index():
     form = NameForm()
     if form.validate_on_submit():
-        old_name = session.get('name')
-        if old_name is not None and old_name != form.name.data:
-            flash('You have changed your name!')
+        user = User.query.filter_by(username=form.name.data).first()
+        if user is None:
+            user = User(username=form.name.data)
+            db.session.add(user)
+            db.session.commit()
+            session['known'] = False
+        else:
+            session['known'] = True
         session['name'] = form.name.data
         return redirect(url_for('index'))
-    return render_template('index.html', current_time=datetime.now(timezone.utc), form=form, name=session.get('name'))
+    return render_template('index.html', form=form, name=session.get('name'),
+                           known=session.get('known', False))
 
 # It handles dynamic routes
 @app.route('/user/<name>')
