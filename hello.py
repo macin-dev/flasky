@@ -6,7 +6,8 @@ from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired    
+from wtforms.validators import DataRequired 
+from flask_migrate import Migrate   
 
 # Create an instance of a Flask application
 # It defines the core center for Web requests
@@ -21,6 +22,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # It represents the Role model inheriting from db.Model
 class Role(db.Model):
