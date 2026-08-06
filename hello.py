@@ -1,17 +1,62 @@
+import os
+from flask_sqlalchemy import SQLAlchemy
+
 from flask import Flask, render_template, session, redirect, url_for, flash
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from datetime import datetime, timezone
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired    
 
 # Create an instance of a Flask application
 # It defines the core center for Web requests
 # coming from the user's browser
 app = Flask(__name__)
-# WTF mechanism for security reasons
+
+# Flask-SQLAlchemy Configuration
 app.config['SECRET_KEY'] =  'hard to guess string'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# It represents the Role model inheriting from db.Model
+class Role(db.Model):
+     # Overwrite default table name set by Flask-SQLAlchemy
+    __tablename__ = 'roles'
+
+    # Table columns 
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+
+    # On a given instance of Role, this will return an object that 
+    # lists all the users that have this role
+    users = db.relationship('User', backref='role')
+
+    # Used for debugging and testing purposes 
+    def __repr__(self):
+        return '<Role %r>' % self.name
+
+# It represents the User model inheriting from db.Model
+class User(db.Model):
+    # Overwrite default table name set by Flask-SQLAlchemy
+    __tablename__ = 'users'
+
+    # Table columns
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+
+    # Foreign key column, established relationship between 
+    # User and Role models
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    # Used for debugging and testing purposes
+    def __repr__(self):
+        return '<User %r>' % self.username
+    
+
 
 # Initialize Bootstrap extension by passing in
 # the instance of the app
